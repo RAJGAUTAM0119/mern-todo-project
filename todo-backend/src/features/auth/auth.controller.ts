@@ -33,6 +33,16 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
 	})
 }
 
+export const getUserTodos = (req: Request, res: Response) => {
+	res.status(200).json({
+		success: true,
+		message: "User fetched successfully",
+		user: req.user
+	})
+}
+
 export const auth = {
-	registerUser, loginUser
+	registerUser, loginUser, getUserTodos
 };
+
+

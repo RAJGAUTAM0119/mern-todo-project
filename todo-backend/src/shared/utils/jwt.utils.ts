@@ -1,6 +1,20 @@
-import jwt from 'jsonwebtoken'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 import { env } from '../../config/env.config.ts'
 import { IToken } from '../../features/auth/dto/token-generation.dto.ts'
+import { StringValue } from 'ms'
+import { AppError } from '../errors/AppError.ts'
+import { Request } from 'express'
+
+
+async function createToken(payload: IToken, TOKEN_SECRET: string, TOKEN_EXPIRY: StringValue): Promise<string> {
+  const { email, role, userId } = payload
+
+  return await jwt.sign({
+    email, role, userId
+  },
+    TOKEN_SECRET, { expiresIn: TOKEN_EXPIRY }
+  )
+}
 
 /**
  * Access Token generator function 
@@ -11,14 +25,10 @@ import { IToken } from '../../features/auth/dto/token-generation.dto.ts'
  * @returns access token string
  */
 export const generateAccessToken = async (payload: IToken): Promise<string> => {
-  const { email, role, userId } = payload
-  const accessToken = await jwt.sign({
-    email, role, userId
-  },
-    env.ACCESS_TOKEN_SECRET, { expiresIn: env.ACCESS_TOKEN_EXPIRY }
-  )
-  return accessToken
+
+  return createToken(payload, env.ACCESS_TOKEN_SECRET, env.ACCESS_TOKEN_EXPIRY)
 }
+
 
 /**
  * refresh token generator function 
@@ -29,12 +39,29 @@ export const generateAccessToken = async (payload: IToken): Promise<string> => {
  * @returns refresh token string
  */
 export const generateRefreshToken = async (payload: IToken): Promise<string> => {
-  const { email, role, userId } = payload
 
-  const refreshToken = await jwt.sign({
-    email, role, userId
-  },
-    env.REFRESH_TOKEN_SECRET, { expiresIn: env.REFRESH_TOKEN_EXPIRY }
-  )
-  return refreshToken
+  return createToken(payload, env.REFRESH_TOKEN_SECRET, env.REFRESH_TOKEN_EXPIRY)
+
+}
+
+
+export const verifyAccessToken = (req: Request) => {
+  const authorizationHeader = (index: number): string => {
+    const value = req.headers.authorization?.split(' ')[index]
+    if (!value) {
+      throw new AppError(401, "Access Denied")
+    }
+    return value
+  }
+
+  const bearer = authorizationHeader(0)
+  if (bearer !== 'Bearer') {
+    throw new AppError(401, "No Bearer")
+  }
+
+  const accessToken = authorizationHeader(1)
+
+
+  const decoded: string | JwtPayload = jwt.verify(accessToken as string, env.ACCESS_TOKEN_SECRET)
+  return decoded
 }

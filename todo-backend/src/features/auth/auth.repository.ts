@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { RegisterUserDTO } from "./dto/register-user.dto.ts";
 import { userModel } from "./user.model.ts";
 
@@ -25,4 +26,8 @@ export const createUser = async (userData: RegisterUserDTO) => {
 
 export const findUserByEmailWithPassword = async (email: string) => {
 	return await userModel.findOne({ email }).select("+password")
+}
+
+export const findUserById = async (id: Types.ObjectId) => {
+	return await userModel.findById(id)
 }
