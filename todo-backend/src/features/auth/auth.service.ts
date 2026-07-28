@@ -1,9 +1,9 @@
+import { Types } from "mongoose";
 import { AppError } from "../../shared/errors/AppError.ts";
-import { generateAccessToken, generateRefreshToken } from "../../shared/utils/jwt.utils.ts";
-import { findUserByEmail, createUser, findUserByEmailWithPassword } from "./auth.repository.ts";
+import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../../shared/utils/jwt.utils.ts";
+import { findUserByEmail, createUser, findUserByEmailWithPassword, findUserById } from "./auth.repository.ts";
 import { ILoginUserDTO } from "./dto/login-user.dto.ts";
 import { RegisterUserDTO } from "./dto/register-user.dto.ts";
-import bcrypt from 'bcrypt'
 
 /**
  * @name registerUserService
@@ -48,4 +48,16 @@ export const loginUserService = async (loginUser: ILoginUserDTO) => {
 	const data = { user, accessToken, refreshToken }
 
 	return data
+}
+
+export const refreshTokenService = async (refreshTokenCookie: string) => {
+	const decoded = verifyRefreshToken(refreshTokenCookie)
+	const { role, email, userId } = decoded
+	const user = await findUserById(userId)
+	if (!user) {
+		throw new AppError(401, "Unauthorized")
+	}
+	const accessToken = generateAccessToken({ userId, role, email })
+
+	return accessToken
 }

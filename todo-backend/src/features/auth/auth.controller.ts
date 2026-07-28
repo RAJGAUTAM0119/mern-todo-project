@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { loginUserService, registerUserService } from "./auth.service.ts";
+import { loginUserService, refreshTokenService, registerUserService } from "./auth.service.ts";
 
 const registerUser = async (req: Request, res: Response, next: NextFunction) => {
 
@@ -41,8 +41,19 @@ export const getUserTodos = (req: Request, res: Response) => {
 	})
 }
 
+export const accessTokenRotation = async (req: Request, res: Response) => {
+	const refreshTokenCookie = req.cookies.refreshToken
+	const accessToken = await refreshTokenService(refreshTokenCookie)
+	res.status(200).json({
+		success: true,
+		message: "Cookie extracted successfully",
+		accessToken
+	})
+}
+
+
 export const auth = {
-	registerUser, loginUser, getUserTodos
+	registerUser, loginUser, getUserTodos, accessTokenRotation
 };
 
 
