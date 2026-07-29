@@ -1,8 +1,8 @@
-import jwt, { JwtPayload } from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import { env } from '../../config/env.config.ts'
 import { IToken } from '../../features/auth/dto/token-generation.dto.ts'
 import { StringValue } from 'ms'
-import { tokenPayload } from '../middleware/protect.ts'
+import { tokenPayload } from '../types/jwt.types.ts'
 
 
 function createToken(payload: IToken, TOKEN_SECRET: string, TOKEN_EXPIRY: StringValue): string {

@@ -1,4 +1,3 @@
-import { Types } from "mongoose";
 import { AppError } from "../../shared/errors/AppError.ts";
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../../shared/utils/jwt.utils.ts";
 import { findUserByEmail, createUser, findUserByEmailWithPassword, findUserById } from "./auth.repository.ts";

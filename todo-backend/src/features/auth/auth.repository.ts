@@ -1,4 +1,4 @@
-import { Document, Types } from "mongoose";
+import { Document } from "mongoose";
 import { RegisterUserDTO } from "./dto/register-user.dto.ts";
 import { userModel } from "./user.model.ts";
 

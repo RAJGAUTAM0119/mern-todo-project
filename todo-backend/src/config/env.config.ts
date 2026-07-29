@@ -23,5 +23,4 @@ export const env = {
 	ACCESS_TOKEN_EXPIRY: getEnvVariables("ACCESS_TOKEN_EXPIRY") as StringValue,
 	REFRESH_TOKEN_SECRET: getEnvVariables("REFRESH_TOKEN_SECRET"),
 	REFRESH_TOKEN_EXPIRY: getEnvVariables("REFRESH_TOKEN_EXPIRY") as StringValue,
-
 };

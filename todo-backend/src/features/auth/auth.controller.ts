@@ -6,7 +6,7 @@ const registerUser = async (req: Request, res: Response, next: NextFunction) => 
 	const { name, email, password } = req.body;
 	const user = await registerUserService({ name, email, password });
 
-	return res.status(200).json({
+	return res.status(201).json({
 		success: true,
 		message: "User Register succesfully",
 		user,
