@@ -1,0 +1,11 @@
+import { Router } from 'express'
+import { validateMiddleware } from '../../shared/middleware/validate.ts'
+import { todoSchema } from '../../shared/validation/todo.validation.ts'
+import { todo } from './todo.controller.ts'
+import { asyncHandler } from '../../shared/middleware/asyncHandler.ts'
+import { protectedMiddleware } from '../../shared/middleware/protect.ts'
+
+export const todoRouter = Router()
+
+todoRouter.post('/create-todo', protectedMiddleware, validateMiddleware(todoSchema), asyncHandler(todo.createTodo))
+todoRouter.get('/get-todos', protectedMiddleware, asyncHandler(todo.getUserTodos))

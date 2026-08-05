@@ -17,30 +17,27 @@ export const protectedMiddleware = async (req: Request, res:
   Response, next: NextFunction
 ) => {
 
-  const authorizationHeader = (values: string): string => {
-    const value = req.headers.authorization?.split(' ')
-    if (!value) {
-      throw new AppError(401, "Access Denied")
-    }
-    const valueInArray = value?.forEach((values) => {
-      console.log(values)
-      if (values === "Bearer") {
-        return values
-      }
-      if (values.includes("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9")) {
-        return values
-      }
-    })
-    console.log(valueInArray)
+  const authHeader = req.headers.authorization
 
-    return ""
+  if (!authHeader) {
+    throw new AppError(401, "Access Denied - no authHeader provided")
   }
-  const bearer = authorizationHeader("Bearer")
-  if (bearer !== 'Bearer') {
+
+  const value = authHeader?.split(' ')
+
+  const bearerIndex = value.findIndex((part) => part === "Bearer")
+
+  if (bearerIndex === -1) {
     throw new AppError(401, "No Bearer")
   }
 
-  const accessToken = authorizationHeader("")
+  const tokenIndex = bearerIndex + 1
+
+  if (tokenIndex >= value.length) {
+    throw new AppError(401, "Invalid authorization format - No token provided after Bearer");
+  }
+
+  const accessToken = value[tokenIndex]
 
   const decoded: tokenPayload = verifyAccessToken(accessToken)
   const { userId } = decoded
@@ -49,6 +46,7 @@ export const protectedMiddleware = async (req: Request, res:
   if (!user) {
     throw new AppError(401, "User can't be set")
   }
+
   req.user = user
 
 
