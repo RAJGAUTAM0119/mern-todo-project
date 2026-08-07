@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 import { env } from '../../config/env.config.ts'
 import { IToken } from '../../features/auth/dto/token-generation.dto.ts'
 import { StringValue } from 'ms'
-import { tokenPayload } from '../types/jwt.types.ts'
+import { TokenPayload } from '../types/jwt.type.ts'
 
 
 function createToken(payload: IToken, TOKEN_SECRET: string, TOKEN_EXPIRY: StringValue): string {
@@ -44,12 +44,12 @@ export const generateRefreshToken = async (payload: IToken): Promise<string> => 
 }
 
 
-export const verifyAccessToken = (accessToken: string): tokenPayload => {
+export const verifyAccessToken = (accessToken: string): TokenPayload => {
 
-  return jwt.verify(accessToken, env.ACCESS_TOKEN_SECRET) as tokenPayload
+  return jwt.verify(accessToken, env.ACCESS_TOKEN_SECRET) as TokenPayload
 }
 
-export const verifyRefreshToken = (refreshToken: string): tokenPayload => {
+export const verifyRefreshToken = (refreshToken: string): TokenPayload => {
 
-  return jwt.verify(refreshToken, env.REFRESH_TOKEN_SECRET) as tokenPayload
+  return jwt.verify(refreshToken, env.REFRESH_TOKEN_SECRET) as TokenPayload
 }

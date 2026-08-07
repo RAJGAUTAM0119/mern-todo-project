@@ -1,6 +1,6 @@
 import { UserRole } from "../../features/auth/user.model.ts";
 
-export interface tokenPayload {
+export interface TokenPayload {
   userId: string;
   role: UserRole;
   email: string;

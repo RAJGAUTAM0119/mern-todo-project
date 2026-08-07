@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { findUserById } from "../../features/auth/auth.repository.ts";
 import { verifyAccessToken } from "../utils/jwt.utils.ts";
 import { AppError } from "../errors/AppError.ts";
-import { tokenPayload } from "../types/jwt.types.ts";
+import { tokenPayload } from "../types/jwt.type.ts";
 import { Document } from "mongoose";
 
 declare global {

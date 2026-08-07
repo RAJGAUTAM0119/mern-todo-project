@@ -1,14 +1,23 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 const { Schema, model } = mongoose
 
-export enum priority {
+export enum TodoPriority {
   LOW = "LOW",
   MEDIUM = "MEDIUM",
   HIGH = "HIGH"
 }
 
-const todoSchema = new Schema({
+interface ITodo {
+  title: string;
+  description?: string;
+  completed: boolean;
+  priority: TodoPriority;
+  dueDate?: Date;
+  userId: Types.ObjectId;
+}
+
+const todoSchema = new Schema<ITodo>({
   title: {
     type: String,
     required: true,
@@ -30,8 +39,8 @@ const todoSchema = new Schema({
   priority: {
     type: String,
     required: true,
-    enum: priority,
-    default: priority.MEDIUM
+    enum: TodoPriority,
+    default: TodoPriority.MEDIUM
   },
   dueDate: {
     type: Date,
@@ -45,4 +54,4 @@ const todoSchema = new Schema({
   timestamps: true
 })
 
-export const userTodo = model("Todo", todoSchema)
+export const todoModel = model("Todo", todoSchema)

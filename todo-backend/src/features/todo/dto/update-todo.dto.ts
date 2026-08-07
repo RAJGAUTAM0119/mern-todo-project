@@ -1,9 +1,11 @@
-import { priority } from "../todo.model.ts";
+import { Types } from "mongoose";
+import { TodoPriority } from "../todo.model.ts";
 
 export interface UpdateTodoDTO {
   title?: string,
   description?: string,
   completed?: boolean,
-  priority?: priority,
+  priority?: TodoPriority,
   dueDate?: Date,
 }
+

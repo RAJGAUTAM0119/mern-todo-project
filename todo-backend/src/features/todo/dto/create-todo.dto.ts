@@ -1,8 +1,8 @@
-import { priority } from "../todo.model.ts";
+import { TodoPriority } from "../todo.model.ts";
 
 export interface CreateTodoDTO {
   title: string,
   description: string,
-  priority: priority,
+  priority: TodoPriority,
   dueDate: Date,
 }

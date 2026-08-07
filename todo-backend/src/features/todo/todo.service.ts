@@ -2,7 +2,8 @@ import { Document, Types } from "mongoose";
 import { AppError } from "../../shared/errors/AppError.ts";
 import { CreateTodoDTO } from "./dto/create-todo.dto.ts";
 import { createTodoRepository, deleteTodoRepo, getTodoRepo, updateTodoRepo } from "./todo.repository.ts";
-import { UpdateData } from "./todo.controller.ts";
+import { UpdateData } from "../../shared/types/update_todo.type.ts";
+import { PaginationDTO } from "./dto/pagination-todo.dto.ts";
 
 export const createTodoService = async (todoData: CreateTodoDTO, user: Document | undefined) => {
   const createTodoRepo = await createTodoRepository(todoData, user)
@@ -13,11 +14,15 @@ export const createTodoService = async (todoData: CreateTodoDTO, user: Document 
   return createTodoRepo
 }
 
-export const getTodosService = async (userId: Types.ObjectId) => {
-  const todos = await getTodoRepo(userId)
+export const getTodosService = async (getTodo: PaginationDTO) => {
+  const { userId, completed, limit, page, priority } = getTodo
+
+  const todos = await getTodoRepo({ userId, completed, limit, page, priority })
+
   if (!todos) {
     throw new AppError(401, "Repository is not working correctly")
   }
+  
   return todos
 }
 
