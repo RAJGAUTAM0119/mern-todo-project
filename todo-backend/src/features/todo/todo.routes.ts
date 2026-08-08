@@ -12,11 +12,6 @@ todoRouter.post('/create-todo', protectedMiddleware, validateMiddleware(todoSche
 
 todoRouter.get('/get-todos', protectedMiddleware, asyncHandler(todo.getUserTodos))
 
-// todoRouter.get('/get-todo', protectedMiddleware, asyncHandler(todo.testingTodoQuery))
-
-// todoRouter.get('/get-todos?priority=HIGH', protectedMiddleware,)
-
-// todoRouter.get('/get-todos?completed=true&priority=HIGH', protectedMiddleware,)
 
 todoRouter.patch('/:todoId', protectedMiddleware, validateMiddleware(updateTodoSchema), asyncHandler(todo.updateUserTodo))
 

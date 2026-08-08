@@ -19,21 +19,37 @@ export const getTodoRepo = async (getTodo: PaginationDTO) => {
 
   const { userId, completed, limit, page, priority } = getTodo
 
-  let SKIP = 0
-  let LIMIT = 0
 
-  if (page && limit) {
-    LIMIT = limit
-    SKIP = (page - 1) * limit
-  }
+
+  const DEFAULT_PAGE = 1;
+  const DEFAULT_LIMIT = 10;
+  const MAX_LIMIT = 100;
+
+  const requestedPage = page ?? DEFAULT_PAGE;
+  const requestedLimit = limit ?? DEFAULT_LIMIT;
+
+  let LIMIT = requestedLimit
+  let SKIP = (requestedPage - 1) * requestedLimit
+
 
   if (SKIP < 0) {
     throw new AppError(400, "There is pagination error")
   }
 
-  console.log(completed, priority)
 
-  return await todoModel.find({ userId: userId, completed: completed, priority: priority }).skip(SKIP).limit(LIMIT)
+  const filter: Record<string, unknown> = {
+    userId,
+  };
+
+  if (completed !== undefined) {
+    filter.completed = completed;
+  }
+
+  if (priority !== undefined) {
+    filter.priority = priority;
+  }
+
+  return await todoModel.find(filter).skip(SKIP).limit(LIMIT)
 }
 
 export const updateTodoRepo = async (updateData: UpdateData) => {

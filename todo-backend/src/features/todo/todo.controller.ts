@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { createTodoService, deleteTodoService, getTodosService, updateTodoService } from "./todo.service.ts";
 import { AppError } from "../../shared/errors/AppError.ts";
+import { PaginationDTO } from "./dto/pagination-todo.dto.ts";
 
 
 
@@ -25,16 +26,35 @@ const getUserTodos = async (req: Request, res: Response) => {
 
   const user = req.user
 
-  const completed = Boolean(req.query.completed)
-  const limit = Number(req.query.limit)
-  const page = Number(req.query.page)
-  const priority = req.query.priority
-
   if (!user) {
     throw new AppError(401, "User is not valid")
   }
+
+  const completed =
+    req.query.completed === undefined
+      ? undefined
+      : req.query.completed === "true";
+
+  const limit =
+    req.query.limit === undefined
+      ? undefined
+      : Number(req.query.limit);
+
+  const page =
+    req.query.page === undefined
+      ? undefined
+      : Number(req.query.page);
+
+  const priority =
+    typeof req.query.priority === "string"
+      ? req.query.priority
+      : undefined;
+
   const userId = user._id
-  const userTodos = await getTodosService({ userId, completed, limit, page, priority })
+
+  const getTodoData: PaginationDTO = { userId, completed, limit, page, priority }
+
+  const userTodos = await getTodosService(getTodoData)
 
   if (!userTodos) {
     throw new AppError(401, "Todo not created at this moment")

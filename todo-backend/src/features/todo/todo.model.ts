@@ -1,12 +1,7 @@
 import mongoose, { Types } from "mongoose";
+import { TodoPriority } from "./dto/pagination-todo.dto.ts";
 
 const { Schema, model } = mongoose
-
-export enum TodoPriority {
-  LOW = "LOW",
-  MEDIUM = "MEDIUM",
-  HIGH = "HIGH"
-}
 
 interface ITodo {
   title: string;

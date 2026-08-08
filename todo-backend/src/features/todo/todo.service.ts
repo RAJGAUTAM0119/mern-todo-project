@@ -15,14 +15,13 @@ export const createTodoService = async (todoData: CreateTodoDTO, user: Document 
 }
 
 export const getTodosService = async (getTodo: PaginationDTO) => {
-  const { userId, completed, limit, page, priority } = getTodo
 
-  const todos = await getTodoRepo({ userId, completed, limit, page, priority })
+  const todos = await getTodoRepo(getTodo)
 
   if (!todos) {
     throw new AppError(401, "Repository is not working correctly")
   }
-  
+
   return todos
 }
 
