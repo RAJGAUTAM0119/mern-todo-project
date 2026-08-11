@@ -1,5 +1,5 @@
 import mongoose, { Types } from "mongoose";
-import { TodoPriority } from "./dto/pagination-todo.dto.ts";
+import { TodoPriority } from "./dto/todo-query.dto.ts";
 
 const { Schema, model } = mongoose
 

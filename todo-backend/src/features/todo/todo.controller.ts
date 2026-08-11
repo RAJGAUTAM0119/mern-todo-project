@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { createTodoService, deleteTodoService, getTodosService, updateTodoService } from "./todo.service.ts";
 import { AppError } from "../../shared/errors/AppError.ts";
-import { PaginationDTO } from "./dto/pagination-todo.dto.ts";
+import { TodoQueryDTO } from "./dto/todo-query.dto.ts";
 
 
 
@@ -35,31 +35,72 @@ const getUserTodos = async (req: Request, res: Response) => {
       ? undefined
       : req.query.completed === "true";
 
-  const limit =
-    req.query.limit === undefined
-      ? undefined
-      : Number(req.query.limit);
-
   const page =
-    req.query.page === undefined
-      ? undefined
-      : Number(req.query.page);
+    typeof req.query.page === "string"
+      ? Number(req.query.page)
+      : 1;
+
+  const limit =
+    typeof req.query.limit === "string"
+      ? Number(req.query.limit)
+      : 10;
+
+  const allowedSortFields = [
+    "createdAt",
+    "dueDate",
+    "priority",
+    "title",
+  ] as const;
+
+  const requestedSort =
+    typeof req.query.sort === "string"
+      ? req.query.sort
+      : "dueDate";
+
+  if (!allowedSortFields.includes(requestedSort as typeof allowedSortFields[number])) {
+    throw new AppError(400, "Invalid sort field");
+  }
 
   const priority =
     typeof req.query.priority === "string"
       ? req.query.priority
       : undefined;
 
-  const userId = user._id
+  const requestedOrder =
+    typeof req.query.order === "string"
+      ? req.query.order
+      : "asc";
 
-  const getTodoData: PaginationDTO = { userId, completed, limit, page, priority }
+  if (requestedOrder !== "asc" && requestedOrder !== "desc") {
+    throw new AppError(400, "Invalid sort order");
+  }
 
-  const userTodos = await getTodosService(getTodoData)
+  const requestedSearch =
+    (typeof req.query.search === "string" && req.query.search === "" || '' || undefined || null)
+      ? undefined
+      : req.query.search
+  console.log(requestedSearch)
+
+  if (!requestedSearch) {
+    throw new AppError(400, "Bad Request")
+  }
+
+  const todoQuery: TodoQueryDTO = {
+    userId: user._id,
+    completed,
+    priority,
+    page,
+    limit,
+    sort: requestedSort,
+    order: requestedOrder,
+    search: requestedSearch
+  };
+
+  const userTodos = await getTodosService(todoQuery)
 
   if (!userTodos) {
     throw new AppError(401, "Todo not created at this moment")
   }
-
 
   res.status(200).json({
     success: true,
@@ -98,10 +139,6 @@ const deleteUserTodo = async (req: Request, res: Response) => {
   })
 }
 
-// const testingTodoQuery = (req: Request, res: Response) => {
-//   const completed = req.query.completed
-//   console.log(completed)
-// }
 
 export const todo = {
   createTodo, getUserTodos, updateUserTodo, deleteUserTodo

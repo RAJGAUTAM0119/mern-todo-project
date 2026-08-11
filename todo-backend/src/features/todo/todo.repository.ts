@@ -3,7 +3,7 @@ import { CreateTodoDTO } from "./dto/create-todo.dto.ts";
 import { todoModel } from "./todo.model.ts";
 import { AppError } from "../../shared/errors/AppError.ts";
 import { UpdateData } from "../../shared/types/update_todo.type.ts";
-import { PaginationDTO } from "./dto/pagination-todo.dto.ts";
+import { TodoQueryDTO } from "./dto/todo-query.dto.ts";
 
 
 export const createTodoRepository = async (todoData: CreateTodoDTO, user: Document | undefined) => {
@@ -15,11 +15,9 @@ export const createTodoRepository = async (todoData: CreateTodoDTO, user: Docume
   return await todoModel.create({ description, dueDate, priority, title, userId })
 }
 
-export const getTodoRepo = async (getTodo: PaginationDTO) => {
+export const getTodoRepo = async (getTodo: TodoQueryDTO) => {
 
-  const { userId, completed, limit, page, priority } = getTodo
-
-
+  const { userId, completed, limit, page, priority, order, sort, search } = getTodo
 
   const DEFAULT_PAGE = 1;
   const DEFAULT_LIMIT = 10;
@@ -36,9 +34,9 @@ export const getTodoRepo = async (getTodo: PaginationDTO) => {
     throw new AppError(400, "There is pagination error")
   }
 
-
   const filter: Record<string, unknown> = {
     userId,
+
   };
 
   if (completed !== undefined) {
@@ -49,7 +47,13 @@ export const getTodoRepo = async (getTodo: PaginationDTO) => {
     filter.priority = priority;
   }
 
-  return await todoModel.find(filter).skip(SKIP).limit(LIMIT)
+  const direction = order === "asc" ? 1 : -1;
+  const sorting = {
+    [sort]: direction,
+    _id: direction,
+  };
+
+  return await todoModel.find(filter).sort(sorting).skip(SKIP).limit(LIMIT)
 }
 
 export const updateTodoRepo = async (updateData: UpdateData) => {

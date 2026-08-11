@@ -3,7 +3,7 @@ import { AppError } from "../../shared/errors/AppError.ts";
 import { CreateTodoDTO } from "./dto/create-todo.dto.ts";
 import { createTodoRepository, deleteTodoRepo, getTodoRepo, updateTodoRepo } from "./todo.repository.ts";
 import { UpdateData } from "../../shared/types/update_todo.type.ts";
-import { PaginationDTO } from "./dto/pagination-todo.dto.ts";
+import { TodoQueryDTO } from "./dto/todo-query.dto.ts";
 
 export const createTodoService = async (todoData: CreateTodoDTO, user: Document | undefined) => {
   const createTodoRepo = await createTodoRepository(todoData, user)
@@ -14,7 +14,7 @@ export const createTodoService = async (todoData: CreateTodoDTO, user: Document 
   return createTodoRepo
 }
 
-export const getTodosService = async (getTodo: PaginationDTO) => {
+export const getTodosService = async (getTodo: TodoQueryDTO) => {
 
   const todos = await getTodoRepo(getTodo)
 
