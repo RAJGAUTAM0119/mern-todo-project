@@ -8,5 +8,4 @@ export const authRouter = Router();
 
 authRouter.post('/register', validateMiddleware(registerSchema), asyncHandler(auth.registerUser));
 authRouter.post('/login', validateMiddleware(loginSchema), asyncHandler(auth.loginUser))
-// authRouter.get('/get-todos', protectedMiddleware, asyncHandler(auth.getUserTodos))
 authRouter.post('/refresh', asyncHandler(auth.accessTokenRotation))

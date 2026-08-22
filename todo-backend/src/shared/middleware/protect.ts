@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { findUserById } from "../../features/auth/auth.repository.ts";
 import { verifyAccessToken } from "../utils/jwt.utils.ts";
 import { AppError } from "../errors/AppError.ts";
-import { tokenPayload } from "../types/jwt.type.ts";
+import { TokenPayload } from "../types/jwt.type.ts";
 import { Document } from "mongoose";
 
 declare global {
@@ -39,7 +39,7 @@ export const protectedMiddleware = async (req: Request, res:
 
   const accessToken = value[tokenIndex]
 
-  const decoded: tokenPayload = verifyAccessToken(accessToken)
+  const decoded: TokenPayload = verifyAccessToken(accessToken)
   const { userId } = decoded
 
   const user = await findUserById(userId)
@@ -48,7 +48,6 @@ export const protectedMiddleware = async (req: Request, res:
   }
 
   req.user = user
-
 
   return next()
 }

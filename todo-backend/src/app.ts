@@ -1,6 +1,6 @@
 import express from "express";
 import { authRouter } from "./features/auth/auth.route.ts";
-import { errorMiddelware } from "./shared/middleware/error.middleware.ts";
+import { errorMiddleware } from "./shared/middleware/error.middleware.ts";
 import cookieParser from "cookie-parser";
 import { todoRouter } from "./features/todo/todo.routes.ts";
 
@@ -12,6 +12,6 @@ app.use(cookieParser())
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/todo", todoRouter);
 
-app.use(errorMiddelware)
+app.use(errorMiddleware)
 
 export default app;

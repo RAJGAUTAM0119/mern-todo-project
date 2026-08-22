@@ -1,4 +1,4 @@
-import { Document, Types } from "mongoose";
+import { Document, Types, QueryFilter } from "mongoose";
 import { CreateTodoDTO } from "./dto/create-todo.dto.ts";
 import { todoModel } from "./todo.model.ts";
 import { AppError } from "../../shared/errors/AppError.ts";
@@ -16,8 +16,16 @@ export const createTodoRepository = async (todoData: CreateTodoDTO, user: Docume
 }
 
 export const getTodoRepo = async (getTodo: TodoQueryDTO) => {
-
-  const { userId, completed, limit, page, priority, order, sort, search } = getTodo
+  const {
+    userId,
+    completed,
+    limit,
+    page,
+    priority,
+    order,
+    sort,
+    search
+  } = getTodo;
 
   const DEFAULT_PAGE = 1;
   const DEFAULT_LIMIT = 10;
@@ -26,17 +34,23 @@ export const getTodoRepo = async (getTodo: TodoQueryDTO) => {
   const requestedPage = page ?? DEFAULT_PAGE;
   const requestedLimit = limit ?? DEFAULT_LIMIT;
 
-  let LIMIT = requestedLimit
-  let SKIP = (requestedPage - 1) * requestedLimit
-
+  let LIMIT = requestedLimit;
+  let SKIP = (requestedPage - 1) * requestedLimit;
 
   if (SKIP < 0) {
-    throw new AppError(400, "There is pagination error")
+    throw new AppError(400, "There is pagination error");
   }
 
-  const filter: Record<string, unknown> = {
-    userId,
+  const direction = order === "asc" ? 1 : -1;
 
+  const sorting: Record<string, 1 | -1> = {};
+  if (sort) {
+    sorting[sort] = direction;
+  }
+  sorting._id = direction;
+
+  const filter = {
+    userId
   };
 
   if (completed !== undefined) {
@@ -47,14 +61,23 @@ export const getTodoRepo = async (getTodo: TodoQueryDTO) => {
     filter.priority = priority;
   }
 
-  const direction = order === "asc" ? 1 : -1;
-  const sorting = {
-    [sort]: direction,
-    _id: direction,
-  };
+  if (search !== undefined && search.trim() !== '') {
+    filter.$or = [
+      { title: { $regex: search, $options: 'i' } },
+      { description: { $regex: search, $options: 'i' } }
+    ];
+  }
 
-  return await todoModel.find(filter).sort(sorting).skip(SKIP).limit(LIMIT)
-}
+
+  const results = await todoModel
+    .find(filter)
+    .sort(sorting)
+    .skip(SKIP)
+    .limit(LIMIT)
+    .exec();  // ✅ Add .exec() for better error handling
+
+  return results;
+};
 
 export const updateTodoRepo = async (updateData: UpdateData) => {
   const { todoId, userId, update } = updateData

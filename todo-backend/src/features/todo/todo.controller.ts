@@ -75,15 +75,22 @@ const getUserTodos = async (req: Request, res: Response) => {
     throw new AppError(400, "Invalid sort order");
   }
 
-  const requestedSearch =
-    (typeof req.query.search === "string" && req.query.search === "" || '' || undefined || null)
-      ? undefined
-      : req.query.search
-  console.log(requestedSearch)
 
-  if (!requestedSearch) {
-    throw new AppError(400, "Bad Request")
+  const rawSearch = req.query.search;
+
+  if (rawSearch !== undefined && typeof rawSearch !== "string") {
+    throw new AppError(400, "Invalid search parameter");
   }
+
+  if (typeof rawSearch === "string" && rawSearch.trim() === "") {
+    throw new AppError(400, "Search cannot be empty");
+  }
+
+  const requestedSearch =
+    typeof rawSearch === "string"
+      ? rawSearch.trim()
+      : undefined;
+
 
   const todoQuery: TodoQueryDTO = {
     userId: user._id,
