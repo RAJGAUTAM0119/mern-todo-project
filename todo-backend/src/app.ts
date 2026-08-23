@@ -3,6 +3,7 @@ import { authRouter } from "./features/auth/auth.route.ts";
 import { errorMiddleware } from "./shared/middleware/error.middleware.ts";
 import cookieParser from "cookie-parser";
 import { todoRouter } from "./features/todo/todo.routes.ts";
+import { notFound } from "./features/error case/not_found.ts";
 
 const app = express();
 app.use(express.json());
@@ -11,6 +12,8 @@ app.use(cookieParser())
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/todo", todoRouter);
+
+app.use(notFound)
 
 app.use(errorMiddleware)
 

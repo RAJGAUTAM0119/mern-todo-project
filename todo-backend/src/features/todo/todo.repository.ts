@@ -34,11 +34,16 @@ export const getTodoRepo = async (getTodo: TodoQueryDTO) => {
   const requestedPage = page ?? DEFAULT_PAGE;
   const requestedLimit = limit ?? DEFAULT_LIMIT;
 
+
   let LIMIT = requestedLimit;
   let SKIP = (requestedPage - 1) * requestedLimit;
 
   if (SKIP < 0) {
     throw new AppError(400, "There is pagination error");
+  }
+
+  if (LIMIT > 100) {
+    LIMIT = MAX_LIMIT
   }
 
   const direction = order === "asc" ? 1 : -1;
@@ -68,13 +73,14 @@ export const getTodoRepo = async (getTodo: TodoQueryDTO) => {
     ];
   }
 
+  console.log(LIMIT)
 
   const results = await todoModel
     .find(filter)
     .sort(sorting)
     .skip(SKIP)
     .limit(LIMIT)
-    .exec();  // ✅ Add .exec() for better error handling
+    .exec();
 
   return results;
 };
