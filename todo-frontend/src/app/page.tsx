@@ -1,25 +1,26 @@
-import Image from "next/image";
-import Login from "./login/page";
-
 export default function Home() {
 	return (
 		<div className="px-20 py-5">
 			<div className="flex justify-between items-center ">
-				<div>Task Flow</div>
+				<div className="text-2xl font-semibold">Task Flow</div>
 				<div>
-					<button className="bg-blue-400 rounded-3xl px-3 py-1 cursor-pointer text-[#000000] font-bold hover:size-16">
+					<button className="bg-black rounded-3xl px-3 py-1 cursor-pointer text-white font-bold ">
 						Login
 					</button>
 				</div>
 			</div>
-			<div>
-				<h2>Organise Your Code</h2>
-				<h2>Clean Your Mind</h2>
+			<div className="flex items-center justify-center flex-col h-[70dvh]">
+				<h2 className="text-6xl font-bold linear py-3">Organise Your Tasks</h2>
+				<h2 className="text-6xl font-bold linear">Clean Your Mind</h2>
 			</div>
-			<div>
-				<button>Get started</button>
+			<div className="flex items-center justify-center">
+				<button className="text-2xl font-sans cursor-pointer bg-black text-white px-5 py-2 rounded-3xl">
+					Get started
+				</button>
 			</div>
-			<div>todo preview</div>
+			<div className="flex items-center justify-center h-[50dvh] text-2xl font-mono">
+				todo preview
+			</div>
 		</div>
 	);
 }
