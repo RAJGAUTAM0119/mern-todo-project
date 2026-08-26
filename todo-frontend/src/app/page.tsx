@@ -5,7 +5,7 @@ export default function Home() {
 				<div className="text-2xl font-semibold">Task Flow</div>
 				<div>
 					<button className="bg-black rounded-3xl px-3 py-1 cursor-pointer text-white font-bold ">
-						Login
+						Dashboard
 					</button>
 				</div>
 			</div>
