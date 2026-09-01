@@ -1,57 +1,123 @@
 "use client";
 
-import { useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import Image from "next/image";
+import LoginBanner from "@/public/sign-up.png";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-const LoginForm = () => {
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
-	console.log(email);
-	console.log(password);
+type Inputs = {
+	[data: string]: unknown;
+};
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
-	};
+const ZodFormSchema = z.object({
+	email: z.email("Enter Valid Email"),
+	password: z
+		.string("Not a string")
+		.min(3, "minimum length should be 3")
+		.max(20, "maximum length should be 20"),
+	// confirmPassword: z.string(),
+});
+// .refine((data) => data.password == data.confirmPassword, {
+// 	message: "Password Doesn't match",
+// 	path: ["confirmPassword"],
+// });
+
+const ZodLoginForm = () => {
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<Inputs>({
+		resolver: zodResolver(ZodFormSchema),
+	});
+
+	const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
 
 	return (
-		<section className="w-dvw h-dvh flex flex-col items-center justify-center bg-red-500">
-			<div className="w-50dvw h-50dvh flex flex-col items-center justify-center bg-blue-500">
-				<div className="text-4xl font-sans font-bold flex- items-start justify-center">
-					Login
+		<section className="flex items-center justify-center">
+			<div className="bg-white flex gap-5 items-center justify-center">
+				<div className="bg-black rounded-3xl flex flex-1 items-center justify-center">
+					{" "}
+					<Image
+						src={LoginBanner}
+						alt="Login Banner"
+						className="w-75 flex rotate-90"
+						loading="eager"
+					/>
 				</div>
-				<form className="flex flex-col gap-3">
-					<div className="flex gap-4">
-						<label htmlFor="email" className="font-semibold text-2xl">
-							Email
-						</label>
-						<input
-							id="email"
-							placeholder={"Your email"}
-							onChange={(e) => setEmail(e.target.value)}
-						/>
+				<div className="w-[35dvw] h-[90dvh] flex flex-1 flex-col items-center justify-center  border rounded-3xl border-gray-200 	">
+					<div className="text-4xl font-sans font-bold self-start ml-23 mb-10">
+						Login
 					</div>
-					<div className="flex gap-4">
-						<label htmlFor="password" className="font-semibold text-2xl">
-							Password
-						</label>
-						<input
-							id="password"
-							placeholder={"Your password"}
-							onChange={(e) => setPassword(e.target.value)}
-						/>
-					</div>
-
-					<div className="flex items-center justify-center">
-						<button
-							className="bg-black rounded-3xl w-auto text-white font-bold font-sans px-4 py-2"
-							onSubmit={handleSubmit}
-						>
-							Login
-						</button>
-					</div>
-				</form>
+					<form
+						onSubmit={handleSubmit(onSubmit)}
+						className="w-70	 gap-4 flex flex-col"
+					>
+						<div>
+							<div className="flex gap-4 items-center justify-between">
+								<label htmlFor="email" className="font-semibold ">
+									Email
+								</label>
+								<input
+									id="email"
+									type="email"
+									placeholder={"Email"}
+									className="border border-black rounded-2xl outline-none pl-1"
+									{...register("email")}
+								/>
+							</div>
+							<div>{errors.email && <span>{errors.email.message}</span>}</div>
+						</div>
+						<div>
+							<div className="flex gap-4 items-center justify-between">
+								<label htmlFor="password" className="font-semibold ">
+									Password
+								</label>
+								<input
+									id="password"
+									type="password"
+									placeholder={"password"}
+									className="border border-black rounded-2xl outline-none pl-1"
+									{...register("password")}
+								/>
+							</div>
+							<div>
+								{errors.password && <span>{errors.password.message}</span>}
+							</div>
+						</div>
+						{/* <div>
+							<div className="flex gap-4 items-center justify-between">
+								<label htmlFor="confirmPassword" className="font-semibold ">
+									Confirm Password
+								</label>
+								<input
+									id="confirmPassword"
+									type="password"
+									placeholder={"confirmPassword"}
+									className="border border-black rounded-2xl outline-none pl-1"
+									{...register("confirmPassword")}
+								/>
+							</div>
+							<div>
+								{errors.confirmPassword && (
+									<span>{errors.confirmPassword.message}</span>
+								)}
+							</div>
+						</div> */}
+						<div className="flex items-center justify-center">
+							<button
+								className="bg-black rounded-3xl w-auto text-white font-bold font-sans my-5 px-4 py-2 cursor-pointer"
+								type="submit"
+							>
+								Login
+							</button>
+						</div>
+					</form>
+				</div>
 			</div>
 		</section>
 	);
 };
 
-export default LoginForm;
+export default ZodLoginForm;
