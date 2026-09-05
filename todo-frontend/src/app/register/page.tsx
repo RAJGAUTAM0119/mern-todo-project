@@ -1,7 +1,12 @@
+import ZodSignupForm from "@/src/components/auth/SignupForm";
 import React from "react";
 
 const Register = () => {
-	return <div>Register page</div>;
+	return (
+		<div>
+		<ZodSignupForm/>
+		</div>
+	);
 };
 
 export default Register;
