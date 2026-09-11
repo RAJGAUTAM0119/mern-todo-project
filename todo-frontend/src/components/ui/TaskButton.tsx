@@ -1,42 +1,45 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
-interface IProps {
-	ButtonName: string;
-	Icons: ReactNode;
-	NumberOfTasks: number;
-	ClickFunc: () => void;
-	IsActive: boolean;
+interface TaskButtonProps {
+	buttonName: string;
+	icon: ReactNode;
+	taskCount: number;
+	onClick: () => void;
+	isActive: boolean;
 }
 
 const TaskButton = ({
-	ButtonName,
-	Icons,
-	NumberOfTasks,
-	ClickFunc,
-	IsActive,
-}: IProps) => {
+	buttonName,
+	icon,
+	taskCount,
+	onClick,
+	isActive,
+}: TaskButtonProps) => {
 	return (
-		<div
-			className={`flex items-center justify-between p-1 rounded-2xl cursor-pointer ${
-				IsActive ? "bg-[#dddddd] font-semibold" : "bg-[#F4F4F4]"
-			}`}
-			onClick={ClickFunc}
+		<button
+			type="button"
+			onClick={onClick}
+			className={`flex w-full items-center justify-between rounded-2xl p-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black	${isActive ? "bg-[#DDDDDD] font-semibold" : "bg-[#F4F4F4] hover:bg-[#EAEAEA]"}`}
+			aria-current={isActive ? "page" : undefined}
 		>
-			<div className="flex gap-4 items-center">
-				<div>{Icons}</div>
+			<div className="flex min-w-0 items-center gap-4">
+				<span className="shrink-0">
+					{icon}
+				</span>
 
-				<div>{ButtonName}</div>
+				<span className="truncate">
+					{buttonName}
+				</span>
 			</div>
 
-			<div>
-				<div
-					className={`rounded-3 px-2 ${IsActive ? "bg-white" : "bg-[#d8d6d6]"}`}
-				>
-					{NumberOfTasks}
-				</div>
-			</div>
-		</div>
+			<span
+				className={`shrink-0 rounded-full px-2 py-0.5 text-sm ${isActive ? "bg-white" : "bg-[#D8D6D6]"}`}
+			>
+				{taskCount}
+			</span>
+		</button>
 	);
 };
 
 export default TaskButton;
+
