@@ -6,6 +6,15 @@ import { todoRouter } from "./features/todo/todo.routes.ts";
 import { notFound } from "./features/error case/not_found.ts";
 
 const app = express();
+const frontendOrigin = process.env.FRONTEND_URL ?? "http://localhost:3000";
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", frontendOrigin);
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.header("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS");
+  if (req.method === "OPTIONS") return res.sendStatus(204);
+  next();
+});
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(cookieParser())

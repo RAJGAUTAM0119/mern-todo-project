@@ -8,8 +8,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react"; // or use any icon library
+import { useRouter } from "next/navigation";
+import { register } from "@/src/lib/auth";
 
 type Inputs = {
+	name: string;
 	email: string;
 	password: string;
 	confirmPassword?: string;
@@ -17,6 +20,7 @@ type Inputs = {
 
 const ZodFormSchema = z
 	.object({
+		name: z.string().min(3, "Name must be at least 3 characters").max(50),
 		email: z.email("Enter a valid email address"),
 		password: z
 			.string()
@@ -43,10 +47,21 @@ const ZodSignupForm = () => {
 		resolver: zodResolver(ZodFormSchema),
 		mode: "onSubmit",
 	});
+	const router = useRouter();
+	const [requestError, setRequestError] = useState("");
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	const onSubmit: SubmitHandler<Inputs> = (data) => {
-		console.log(data);
-		// Handle signup logic here
+	const onSubmit: SubmitHandler<Inputs> = async (data) => {
+		setRequestError("");
+		setIsSubmitting(true);
+		try {
+			await register(data.name, data.email, data.password);
+			router.push("/login");
+		} catch (error) {
+			setRequestError(error instanceof Error ? error.message : "Unable to create account");
+		} finally {
+			setIsSubmitting(false);
+		}
 	};
 
 	const password = watch("password");
@@ -68,7 +83,7 @@ const ZodSignupForm = () => {
 		<section className="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8 bg-white">
 			<div className="flex flex-col lg:flex-row gap-5 items-center justify-center w-full max-w-6xl">
 				{/* Image Section - Hidden on mobile/tablet, 50% width on desktop */}
-				<div className="hidden lg:flex relative w-[50%] h-[500px] xl:h-[550px] bg-gradient-to-br from-gray-900 to-black rounded-3xl overflow-hidden shadow-2xl items-center justify-center">
+				<div className="relative hidden min-h-[420px] w-full items-center justify-center overflow-hidden rounded-3xl bg-gradient-to-br from-gray-900 to-black shadow-2xl lg:flex lg:min-h-[550px] lg:w-[50%]">
 					<Image
 						src={LoginBanner}
 						alt="Sign up illustration"
@@ -85,7 +100,7 @@ const ZodSignupForm = () => {
 				</div>
 
 				{/* Signup Form Section */}
-				<div className="w-full lg:w-[50%] min-h-[550px] flex flex-col items-center justify-center bg-white rounded-3xl border border-gray-200 shadow-lg p-6 sm:p-8 md:p-10">
+				<div className="flex min-h-[520px] w-full flex-col items-center justify-center rounded-3xl border border-gray-200 bg-white p-6 shadow-lg sm:p-8 md:p-10 lg:min-h-[550px] lg:w-[50%]">
 					<div className="text-2xl sm:text-3xl md:text-4xl font-sans font-bold self-start ml-0 sm:ml-4 md:ml-8 mb-6 sm:mb-8 md:mb-10 text-gray-800">
 						Create Account
 					</div>
@@ -94,6 +109,12 @@ const ZodSignupForm = () => {
 						onSubmit={handleSubmit(onSubmit)}
 						className="w-full max-w-sm md:max-w-md gap-4 flex flex-col"
 					>
+						{requestError && <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{requestError}</p>}
+						<div className="grid grid-cols-1 items-center gap-2 sm:grid-cols-[100px_1fr] sm:gap-4">
+							<label htmlFor="name" className="font-semibold text-sm text-gray-700">Name</label>
+							<input id="name" type="text" placeholder="Your name" className="w-full rounded-2xl border border-gray-300 bg-gray-50 py-2 pl-4 text-sm outline-none focus:border-black focus:bg-white focus:ring-2 focus:ring-black/10" {...register("name")} />
+						</div>
+						{errors.name && <span className="block text-xs text-red-500 sm:ml-[116px]">{errors.name.message}</span>}
 						{/* Email Field */}
 						<div>
 							<div className="grid grid-cols-1 sm:grid-cols-[100px_1fr] items-center gap-2 sm:gap-4">
@@ -227,8 +248,9 @@ const ZodSignupForm = () => {
 							<button
 								className="bg-black rounded-3xl w-full sm:w-auto min-w-[140px] text-white font-semibold font-sans px-10 py-3 cursor-pointer hover:bg-gray-800 transition-all duration-200 text-sm sm:text-base shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
 								type="submit"
+								disabled={isSubmitting}
 							>
-								Create Account
+								{isSubmitting ? "Creating..." : "Create Account"}
 							</button>
 						</div>
 

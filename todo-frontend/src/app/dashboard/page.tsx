@@ -4,9 +4,9 @@
 import { useState } from "react";
 
 import Menu from "@/src/components/ui/Menu";
-import Stickynotes from "@/src/components/ui/Stickynotes";
-import TodayTaskDashboard from "@/src/components/ui/TodayTask";
-import UpcomingTask from "@/src/components/ui/UpcomingTask";
+import Stickynotes from "@/src/components/todo/stickyNotes/Stickynotes";
+import TodayTaskDashboard from "@/src/components/todo/todaysTask/TodayTask";
+import UpcomingTask from "@/src/components/todo/upcomingTask/UpcomingTask";
 
 export type ActiveTask = "Today" | "Upcoming" | "Sticky Notes";
 

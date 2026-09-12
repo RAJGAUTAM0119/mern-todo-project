@@ -1,3 +1,28 @@
+## Connect to the backend
+
+The frontend uses `NEXT_PUBLIC_API_URL` as the API base URL. Create a `.env.local` file in this folder:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1
+```
+
+Start the backend first, then start the frontend:
+
+```bash
+# terminal 1
+cd todo-backend
+npm install
+npm run dev
+
+# terminal 2
+cd todo-frontend
+npm install
+npm run dev
+```
+
+Open `http://localhost:3000/register` to create an account, then sign in at `/login`. The frontend stores the returned access token in browser storage and sends it as `Authorization: Bearer <token>` for protected todo requests. The backend allows the local frontend origin through `FRONTEND_URL` (defaults to `http://localhost:3000`).
+
+For the backend, make sure its `.env` includes `PORT`, `MONGODB_URI`, `ACCESS_TOKEN_SECRET`, `ACCESS_TOKEN_EXPIRY`, `REFRESH_TOKEN_SECRET`, and `REFRESH_TOKEN_EXPIRY`. Set `NODE_ENV=production` and a real `FRONTEND_URL` when deploying.
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

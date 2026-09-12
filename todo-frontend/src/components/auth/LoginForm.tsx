@@ -6,17 +6,14 @@ import LoginBanner from "@/public/sign-up.png";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { login } from "@/src/lib/auth";
 
-type Inputs = {
-	[data: string]: unknown;
-};
+type Inputs = { email: string; password: string };
 
 const ZodFormSchema = z.object({
 	email: z.email("Enter Valid Email"),
-	password: z
-		.string("Not a string")
-		.min(3, "minimum length should be 3")
-		.max(20, "maximum length should be 20"),
+	password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
 const ZodLoginForm = () => {
@@ -27,14 +24,28 @@ const ZodLoginForm = () => {
 	} = useForm<Inputs>({
 		resolver: zodResolver(ZodFormSchema),
 	});
+	const router = useRouter();
+	const [requestError, setRequestError] = useState("");
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+	const onSubmit: SubmitHandler<Inputs> = async (data) => {
+		setRequestError("");
+		setIsSubmitting(true);
+		try {
+			await login(data.email, data.password);
+			router.push("/dashboard");
+		} catch (error) {
+			setRequestError(error instanceof Error ? error.message : "Unable to log in");
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
 
 	return (
 		<section className="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8 bg-white">
 			<div className="flex flex-col lg:flex-row gap-5 items-center justify-center w-full max-w-6xl">
 				{/* Image Section - Hidden on mobile/tablet, 40% width on desktop */}
-				<div className="hidden lg:flex relative w-[50%] h-[500px] xl:h-[550px] bg-gradient-to-br from-gray-900 to-black rounded-3xl overflow-hidden shadow-2xl items-center justify-center">
+				<div className="relative hidden min-h-[420px] w-full items-center justify-center overflow-hidden rounded-3xl bg-gradient-to-br from-gray-900 to-black shadow-2xl lg:flex lg:min-h-[550px] lg:w-[50%]">
 					{/* <div className="flex justify-center place-items-center-safe"> */}
 					<Image
 						src={LoginBanner}
@@ -56,7 +67,7 @@ const ZodLoginForm = () => {
 				</div>
 
 				{/* Login Form Section - Full width on mobile/tablet, 60% on desktop */}
-				<div className="w-full lg:w-[50%] h-[550px] sm:min-h-[450px] md:min-h-[500px] flex flex-col items-center justify-center bg-white rounded-3xl border border-gray-200 shadow-lg p-6 sm:p-8 md:p-10">
+				<div className="flex min-h-[520px] w-full flex-col items-center justify-center rounded-3xl border border-gray-200 bg-white p-6 shadow-lg sm:p-8 md:p-10 lg:min-h-[550px] lg:w-[50%]">
 					<div className="text-2xl sm:text-3xl md:text-4xl font-sans font-bold self-start ml-0 sm:ml-4 md:ml-8 mb-6 sm:mb-8 md:mb-10 text-gray-800">
 						Welcome Back
 					</div>
@@ -65,6 +76,7 @@ const ZodLoginForm = () => {
 						onSubmit={handleSubmit(onSubmit)}
 						className="w-full max-w-sm md:max-w-md gap-5 flex flex-col"
 					>
+						{requestError && <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{requestError}</p>}
 						{/* Email Field */}
 						<div>
 							<div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start sm:items-center">
@@ -128,8 +140,9 @@ const ZodLoginForm = () => {
 							<button
 								className="bg-black rounded-3xl w-full sm:w-auto min-w-[140px] text-white font-semibold font-sans px-10 py-3 cursor-pointer hover:bg-gray-800 transition-all duration-200 text-sm sm:text-base shadow-md hover:shadow-lg"
 								type="submit"
+								disabled={isSubmitting}
 							>
-								Login
+								{isSubmitting ? "Signing in..." : "Login"}
 							</button>
 						</div>
 
@@ -137,7 +150,7 @@ const ZodLoginForm = () => {
 						<p className="text-center text-sm text-gray-600 mt-2">
 							{`Don't have an account? `}
 							<Link
-								href="#"
+								href="/register"
 								className="text-black font-semibold hover:underline"
 							>
 								Sign Up

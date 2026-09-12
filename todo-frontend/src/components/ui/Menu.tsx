@@ -1,6 +1,7 @@
 "use client";
 
 import type { Dispatch, ReactNode, SetStateAction } from "react";
+import { useRouter } from "next/navigation";
 
 import { IoIosSearch } from "react-icons/io";
 import { GiHamburgerMenu, GiSettingsKnobs } from "react-icons/gi";
@@ -8,6 +9,7 @@ import { FaSignOutAlt } from "react-icons/fa";
 import { TbRectangleFilled } from "react-icons/tb";
 import { FaAngleDoubleRight } from "react-icons/fa";
 import { PiListChecksBold } from "react-icons/pi";
+import { logout } from "@/src/lib/auth";
 
 import TaskButton from "@/src/components/ui/TaskButton";
 import type { ActiveTask } from "@/src/app/dashboard/page";
@@ -49,11 +51,17 @@ const Menu = ({
 	isOpen,
 	setIsOpen,
 }: MenuProps) => {
+	const router = useRouter();
 	const handleTaskChange = (task: ActiveTask) => {
 		onTaskChange(task);
 
 		// Close mobile menu after selecting an item.
 		setIsOpen(false);
+	};
+
+	const handleSignOut = () => {
+		logout();
+		router.push("/login");
 	};
 
 	return (
@@ -138,6 +146,7 @@ const Menu = ({
 
 					<button
 						type="button"
+						onClick={handleSignOut}
 						className="flex items-center gap-3 rounded-lg p-2 text-left transition hover:bg-gray-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
 					>
 						<FaSignOutAlt />
