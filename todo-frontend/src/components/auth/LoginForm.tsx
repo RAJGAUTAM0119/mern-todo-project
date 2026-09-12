@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { login } from "@/src/lib/auth";
+import { useState } from "react";
 
 type Inputs = { email: string; password: string };
 
