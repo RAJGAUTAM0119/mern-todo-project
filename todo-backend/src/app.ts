@@ -3,7 +3,7 @@ import { authRouter } from "./features/auth/auth.route.ts";
 import { errorMiddleware } from "./shared/middleware/error.middleware.ts";
 import cookieParser from "cookie-parser";
 import { todoRouter } from "./features/todo/todo.routes.ts";
-import { notFound } from "./features/error case/not_found.ts";
+import { notFound } from "./shared/errors/notFound.ts";
 
 const app = express();
 
@@ -19,8 +19,11 @@ app.use((req, res, next) => {
 
   res.header("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS");
 
-  if (req.method === "OPTIONS") return res.sendStatus(204);
-  
+  if (req.method === "OPTIONS") {
+    res.sendStatus(204);
+    return;
+  }
+
   next();
 });
 app.use(express.json());

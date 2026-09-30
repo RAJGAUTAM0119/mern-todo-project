@@ -1,9 +1,9 @@
 import { Document, Types, QueryFilter } from "mongoose";
-import { CreateTodoDTO } from "./dto/create-todo.dto.ts";
+import { CreateTodoDTO } from "./dto/createTodo.dto.ts";
 import { todoModel } from "./todo.model.ts";
 import { AppError } from "../../shared/errors/AppError.ts";
-import { UpdateData } from "../../shared/types/update_todo.type.ts";
-import { TodoQueryDTO } from "./dto/todo-query.dto.ts";
+import { UpdateData } from "../../shared/types/updateTodo.type.ts";
+import { TodoQueryDTO } from "./dto/todoQuery.dto.ts";
 
 
 export const createTodoRepository = async (todoData: CreateTodoDTO, user: Document | undefined) => {

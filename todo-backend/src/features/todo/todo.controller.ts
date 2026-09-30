@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { createTodoService, deleteTodoService, getTodosService, updateTodoService } from "./todo.service.ts";
 import { AppError } from "../../shared/errors/AppError.ts";
-import { TodoQueryDTO } from "./dto/todo-query.dto.ts";
+import { TodoQueryDTO } from "./dto/todoQuery.dto.ts";
 
 
 

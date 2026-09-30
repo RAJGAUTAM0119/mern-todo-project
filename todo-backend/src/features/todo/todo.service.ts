@@ -1,9 +1,9 @@
 import { Document, Types } from "mongoose";
 import { AppError } from "../../shared/errors/AppError.ts";
-import { CreateTodoDTO } from "./dto/create-todo.dto.ts";
+import { CreateTodoDTO } from "./dto/createTodo.dto.ts";
 import { createTodoRepository, deleteTodoRepo, getTodoRepo, updateTodoRepo } from "./todo.repository.ts";
-import { UpdateData } from "../../shared/types/update_todo.type.ts";
-import { TodoQueryDTO } from "./dto/todo-query.dto.ts";
+import { UpdateData } from "../../shared/types/updateTodo.type.ts";
+import { TodoQueryDTO } from "./dto/todoQuery.dto.ts";
 
 export const createTodoService = async (todoData: CreateTodoDTO, user: Document | undefined) => {
   const createTodoRepo = await createTodoRepository(todoData, user)

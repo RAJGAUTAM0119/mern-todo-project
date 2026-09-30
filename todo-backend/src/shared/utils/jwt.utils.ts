@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { env } from '../../config/env.config.ts'
-import { IToken } from '../../features/auth/dto/token-generation.dto.ts'
+import { IToken } from '../../features/auth/dto/tokenGeneration.dto.ts'
 import { StringValue } from 'ms'
 import { TokenPayload } from '../types/jwt.type.ts'
 

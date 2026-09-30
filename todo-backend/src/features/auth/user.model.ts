@@ -57,7 +57,13 @@ const userSchema = new Schema<IUser, UserModel, UserMethods>(
 	},
 	{
 		timestamps: true,
-	},
+		toJSON: {
+			transform: (_doc, ret) => {
+				delete ret.password;
+				return ret;
+			},
+		},
+	}
 );
 
 userSchema.pre("save", async function () {

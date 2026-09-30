@@ -4,7 +4,7 @@ import { todoSchema } from '../../shared/validation/todo.validation.ts'
 import { todo } from './todo.controller.ts'
 import { asyncHandler } from '../../shared/middleware/asyncHandler.ts'
 import { protectedMiddleware } from '../../shared/middleware/protect.ts'
-import { updateTodoSchema } from '../../shared/validation/update-todo.validation.ts'
+import { updateTodoSchema } from '../../shared/validation/updateTodo.validation.ts'
 import { notFound } from '../error case/not_found.ts'
 
 export const todoRouter = Router()

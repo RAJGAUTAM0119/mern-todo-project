@@ -1,8 +1,8 @@
 import { AppError } from "../../shared/errors/AppError.ts";
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../../shared/utils/jwt.utils.ts";
 import { findUserByEmail, createUser, findUserByEmailWithPassword, findUserById } from "./auth.repository.ts";
-import { ILoginUserDTO } from "./dto/login-user.dto.ts";
-import { RegisterUserDTO } from "./dto/register-user.dto.ts";
+import { ILoginUserDTO } from "./dto/loginUser.dto.ts";
+import { RegisterUserDTO } from "./dto/registerUser.dto.ts";
 
 /**
  * @name registerUserService
