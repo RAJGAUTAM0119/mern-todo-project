@@ -1,4 +1,3 @@
-import { Types } from "mongoose";
 import { TodoPriority } from "../todo.model.ts";
 
 export interface UpdateTodoDTO {

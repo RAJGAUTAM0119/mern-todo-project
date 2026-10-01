@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { createTodoService, deleteTodoService, getTodosService, updateTodoService } from "./todo.service.ts";
 import { AppError } from "../../shared/errors/AppError.ts";
 import { TodoQueryDTO } from "./dto/todoQuery.dto.ts";
-
+import { TodoPriority } from "./todo.model.ts";
 
 
 const createTodo = async (req: Request, res: Response) => {
@@ -52,19 +52,27 @@ const getUserTodos = async (req: Request, res: Response) => {
     "title",
   ] as const;
 
-  const requestedSort =
+  const rawSort =
     typeof req.query.sort === "string"
       ? req.query.sort
       : "dueDate";
 
-  if (!allowedSortFields.includes(requestedSort as typeof allowedSortFields[number])) {
+  if (!allowedSortFields.includes(rawSort as typeof allowedSortFields[number])) {
     throw new AppError(400, "Invalid sort field");
   }
 
-  const priority =
+  const requestedSort = rawSort as typeof allowedSortFields[number];
+
+  const rawPriority =
     typeof req.query.priority === "string"
       ? req.query.priority
       : undefined;
+
+  if (rawPriority !== undefined && !Object.values(TodoPriority).includes(rawPriority as TodoPriority)) {
+    throw new AppError(400, "Invalid priority value");
+  }
+
+  const priority = rawPriority as TodoPriority | undefined;
 
   const requestedOrder =
     typeof req.query.order === "string"
@@ -90,7 +98,6 @@ const getUserTodos = async (req: Request, res: Response) => {
     typeof rawSearch === "string"
       ? rawSearch.trim()
       : undefined;
-
 
   const todoQuery: TodoQueryDTO = {
     userId: user._id,

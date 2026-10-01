@@ -1,4 +1,5 @@
-import { Document, Types, QueryFilter } from "mongoose";
+import mongoose, { Document } from "mongoose";
+import { ITodo } from "./todo.model.ts";
 import { CreateTodoDTO } from "./dto/createTodo.dto.ts";
 import { todoModel } from "./todo.model.ts";
 import { AppError } from "../../shared/errors/AppError.ts";
@@ -54,7 +55,7 @@ export const getTodoRepo = async (getTodo: TodoQueryDTO) => {
   }
   sorting._id = direction;
 
-  const filter = {
+  const filter: mongoose.QueryFilter<ITodo> = {
     userId
   };
 
@@ -112,7 +113,7 @@ export const deleteTodoRepo = async (updateData: UpdateData) => {
     }
   )
   if (!deleteTodo) {
-    throw new AppError(400, "something is wrong in repository")
+    throw new AppError(400, "Todo not found")
   }
   return deleteTodo
 }

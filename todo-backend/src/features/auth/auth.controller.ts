@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { loginUserService, refreshTokenService, registerUserService } from "./auth.service.ts";
+import { AppError } from "../../shared/errors/AppError.ts";
 
 const registerUser = async (req: Request, res: Response, next: NextFunction) => {
 
@@ -43,6 +44,9 @@ export const getUserTodos = (req: Request, res: Response) => {
 
 export const accessTokenRotation = async (req: Request, res: Response) => {
 	const refreshTokenCookie = req.cookies.refreshToken
+	if (!refreshTokenCookie) {
+		throw new AppError(401, "No refresh token provided")
+	}
 	const accessToken = await refreshTokenService(refreshTokenCookie)
 	res.status(200).json({
 		success: true,

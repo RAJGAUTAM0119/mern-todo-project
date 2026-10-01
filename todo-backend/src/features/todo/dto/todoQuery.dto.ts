@@ -1,10 +1,6 @@
 import { Types } from "mongoose";
 
-export enum TodoPriority {
-  LOW = "LOW",
-  MEDIUM = "MEDIUM",
-  HIGH = "HIGH"
-}
+import { TodoPriority } from "../todo.model.ts";
 
 export type TodoSortFields = "createdAt" | "dueDate" | "priority" | "title"
 

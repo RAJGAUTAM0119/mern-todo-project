@@ -1,9 +1,14 @@
 import mongoose, { Types } from "mongoose";
-import { TodoPriority } from "./dto/todoQuery.dto.ts";
 
 const { Schema, model } = mongoose
 
-interface ITodo {
+export enum TodoPriority {
+  LOW = "LOW",
+  MEDIUM = "MEDIUM",
+  HIGH = "HIGH"
+}
+
+export interface ITodo {
   title: string;
   description?: string;
   completed: boolean;
