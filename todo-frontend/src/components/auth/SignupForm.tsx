@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, useWatch } from "react-hook-form";
 import Image from "next/image";
 import LoginBanner from "@/public/sign-up.png";
 import * as z from "zod";
@@ -9,13 +9,13 @@ import Link from "next/link";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react"; // or use any icon library
 import { useRouter } from "next/navigation";
-import { register } from "@/src/lib/auth";
+import { register as registerUser } from "@/src/lib/auth";
 
 type Inputs = {
 	name: string;
 	email: string;
 	password: string;
-	confirmPassword?: string;
+	confirmPassword: string;
 };
 
 const ZodFormSchema = z
@@ -40,9 +40,9 @@ const ZodFormSchema = z
 const ZodSignupForm = () => {
 	const {
 		register,
+		control,
 		handleSubmit,
 		formState: { errors },
-		watch,
 	} = useForm<Inputs>({
 		resolver: zodResolver(ZodFormSchema),
 		mode: "onSubmit",
@@ -55,16 +55,18 @@ const ZodSignupForm = () => {
 		setRequestError("");
 		setIsSubmitting(true);
 		try {
-			await register(data.name, data.email, data.password);
+			await registerUser(data.name, data.email, data.password);
 			router.push("/login");
 		} catch (error) {
-			setRequestError(error instanceof Error ? error.message : "Unable to create account");
+			setRequestError(
+				error instanceof Error ? error.message : "Unable to create account",
+			);
 		} finally {
 			setIsSubmitting(false);
 		}
 	};
 
-	const password = watch("password");
+	const password = useWatch({ control, name: "password" });
 
 	// State for password visibility
 	const [showPassword, setShowPassword] = useState(false);
@@ -109,12 +111,31 @@ const ZodSignupForm = () => {
 						onSubmit={handleSubmit(onSubmit)}
 						className="w-full max-w-sm md:max-w-md gap-4 flex flex-col"
 					>
-						{requestError && <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{requestError}</p>}
+						{requestError && (
+							<p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
+								{requestError}
+							</p>
+						)}
 						<div className="grid grid-cols-1 items-center gap-2 sm:grid-cols-[100px_1fr] sm:gap-4">
-							<label htmlFor="name" className="font-semibold text-sm text-gray-700">Name</label>
-							<input id="name" type="text" placeholder="Your name" className="w-full rounded-2xl border border-gray-300 bg-gray-50 py-2 pl-4 text-sm outline-none focus:border-black focus:bg-white focus:ring-2 focus:ring-black/10" {...register("name")} />
+							<label
+								htmlFor="name"
+								className="font-semibold text-sm text-gray-700"
+							>
+								Name
+							</label>
+							<input
+								id="name"
+								type="text"
+								placeholder="Your name"
+								className="w-full rounded-2xl border border-gray-300 bg-gray-50 py-2 pl-4 text-sm outline-none focus:border-black focus:bg-white focus:ring-2 focus:ring-black/10"
+								{...register("name")}
+							/>
 						</div>
-						{errors.name && <span className="block text-xs text-red-500 sm:ml-[116px]">{errors.name.message}</span>}
+						{errors.name && (
+							<span className="block text-xs text-red-500 sm:ml-[116px]">
+								{errors.name.message}
+							</span>
+						)}
 						{/* Email Field */}
 						<div>
 							<div className="grid grid-cols-1 sm:grid-cols-[100px_1fr] items-center gap-2 sm:gap-4">

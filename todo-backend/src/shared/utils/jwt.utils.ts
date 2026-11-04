@@ -3,6 +3,7 @@ import { env } from '../../config/env.config.ts'
 import { IToken } from '../../features/auth/dto/tokenGeneration.dto.ts'
 import { StringValue } from 'ms'
 import { TokenPayload } from '../types/jwt.type.ts'
+import { AppError } from '../errors/AppError.ts'
 
 
 function createToken(payload: IToken, TOKEN_SECRET: string, TOKEN_EXPIRY: StringValue): string {
@@ -45,11 +46,31 @@ export const generateRefreshToken = async (payload: IToken): Promise<string> => 
 
 
 export const verifyAccessToken = (accessToken: string): TokenPayload => {
-
-  return jwt.verify(accessToken, env.ACCESS_TOKEN_SECRET) as TokenPayload
+  try {
+    const payload = jwt.verify(accessToken, env.ACCESS_TOKEN_SECRET)
+    if (typeof payload === 'string') {
+      throw new AppError(401, "Invalid access token")
+    }
+    return payload as TokenPayload
+  } catch (error) {
+    if (error instanceof jwt.JsonWebTokenError) {
+      throw new AppError(401, "Invalid or expired access token")
+    }
+    throw error
+  }
 }
 
 export const verifyRefreshToken = (refreshToken: string): TokenPayload => {
-
-  return jwt.verify(refreshToken, env.REFRESH_TOKEN_SECRET) as TokenPayload
+  try {
+    const payload = jwt.verify(refreshToken, env.REFRESH_TOKEN_SECRET)
+    if (typeof payload === 'string') {
+      throw new AppError(401, "Invalid refresh token")
+    }
+    return payload as TokenPayload
+  } catch (error) {
+    if (error instanceof jwt.JsonWebTokenError) {
+      throw new AppError(401, "Invalid or expired refresh token")
+    }
+    throw error
+  }
 }

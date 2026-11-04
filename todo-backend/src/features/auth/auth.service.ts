@@ -30,12 +30,12 @@ export const registerUserService = async (userData: RegisterUserDTO) => {
 export const loginUserService = async (loginUser: ILoginUserDTO) => {
 	const user = await findUserByEmailWithPassword(loginUser.email)
 	if (!user) {
-		throw new AppError(404, "User is not found")
+		throw new AppError(404, "Invalid credentials. Try with correct credentials")
 	}
 
 	const isPasswordCorrect = await user.comparePassword(loginUser.password)
 	if (!isPasswordCorrect) {
-		throw new AppError(401, "Unauthorized")
+		throw new AppError(401, "Invalid credentials. Try with correct credentials")
 	}
 
 	const tokenFunctionArgument = { email: loginUser.email, role: user.role, userId: user._id }

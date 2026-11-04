@@ -6,6 +6,7 @@
 
 		"rootDir": "./src",
 		"outDir": "./dist",
+		"rewriteRelativeImportExtensions": true,
 
 		"strict": true,
 
@@ -16,8 +17,6 @@
 		"forceConsistentCasingInFileNames": true,
 
 		"resolveJsonModule": true,
-		"allowImportingTsExtensions": true,
-		"noEmit": true,
 
 		"allowSyntheticDefaultImports": true,
 

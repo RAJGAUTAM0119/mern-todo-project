@@ -22,23 +22,28 @@ const TodayTaskSection = ({ mode = "today" }: TodayTaskSectionProps) => {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
 
-  const loadTodos = async () => {
-    try {
-      const response = await apiRequest<{ userTodos: { todos?: Todo[] } | Todo[] }>("/todo/get-todos?limit=50&sort=dueDate&order=asc");
-      const result = response.userTodos;
-      setTodos(Array.isArray(result) ? result : result.todos ?? []);
-    } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : "Unable to load tasks");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    void loadTodos();
+    let active = true;
+    void apiRequest<{ userTodos: { todos?: Todo[] } | Todo[] }>("/todo/get-todos?limit=50&sort=dueDate&order=asc")
+      .then((response) => {
+        if (!active) return;
+        const result = response.userTodos;
+        setTodos(Array.isArray(result) ? result : result.todos ?? []);
+      })
+      .catch((requestError: unknown) => {
+        if (!active) return;
+        setError(requestError instanceof Error ? requestError.message : "Unable to load tasks");
+      })
+      .finally(() => {
+        if (active) setIsLoading(false);
+      });
+
     const openForm = () => setIsFormOpen(true);
     window.addEventListener("taskflow:add-task", openForm);
-    return () => window.removeEventListener("taskflow:add-task", openForm);
+    return () => {
+      active = false;
+      window.removeEventListener("taskflow:add-task", openForm);
+    };
   }, []);
 
   const visibleTodos = todos.filter((todo) => {

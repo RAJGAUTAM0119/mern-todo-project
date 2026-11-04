@@ -9,3 +9,4 @@ export const authRouter = Router();
 authRouter.post('/register', validateMiddleware(registerSchema), asyncHandler(auth.registerUser));
 authRouter.post('/login', validateMiddleware(loginSchema), asyncHandler(auth.loginUser))
 authRouter.post('/refresh', asyncHandler(auth.accessTokenRotation))
+authRouter.post('/logout', asyncHandler(auth.logoutUser))

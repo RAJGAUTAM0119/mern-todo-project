@@ -6,9 +6,10 @@ import LoginBanner from "@/public/sign-up.png";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { login } from "@/src/lib/auth";
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 type Inputs = { email: string; password: string };
 
@@ -26,15 +27,18 @@ const ZodLoginForm = () => {
 		resolver: zodResolver(ZodFormSchema),
 	});
 	const router = useRouter();
+	const searchParams = useSearchParams();
 	const [requestError, setRequestError] = useState("");
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [showPassword, setShowPassword] = useState(false);
 
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		setRequestError("");
 		setIsSubmitting(true);
 		try {
 			await login(data.email, data.password);
-			router.push("/dashboard");
+			const redirectTo = searchParams.get("from") || "/dashboard";
+			window.location.href = redirectTo;
 		} catch (error) {
 			setRequestError(error instanceof Error ? error.message : "Unable to log in");
 		} finally {
@@ -77,7 +81,11 @@ const ZodLoginForm = () => {
 						onSubmit={handleSubmit(onSubmit)}
 						className="w-full max-w-sm md:max-w-md gap-5 flex flex-col"
 					>
-						{requestError && <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{requestError}</p>}
+						{requestError && (
+							<p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
+								{requestError}
+							</p>
+						)}
 						{/* Email Field */}
 						<div>
 							<div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start sm:items-center">
@@ -111,13 +119,21 @@ const ZodLoginForm = () => {
 								>
 									Password
 								</label>
-								<input
-									id="password"
-									type="password"
-									placeholder="Enter your password"
-									className="w-full border border-gray-300 rounded-2xl outline-none pl-4 py-2 sm:py-2.5 text-sm sm:text-base bg-gray-50 focus:bg-white focus:ring-2 focus:ring-black/10 focus:border-black transition-all duration-200"
-									{...register("password")}
-								/>
+								<div className="relative w-full">
+									<input
+										id="password"
+										type={showPassword ? "text" : "password"}
+										placeholder="Enter your password"
+										className="w-full border border-gray-300 rounded-2xl outline-none pl-4 py-2 sm:py-2.5 text-sm sm:text-base bg-gray-50 focus:bg-white focus:ring-2 focus:ring-black/10 focus:border-black transition-all duration-200"
+										{...register("password")}
+									/>
+									<button
+										type="button"
+										onClick={() => setShowPassword(!showPassword)}
+										className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors duration-200	"
+									>
+										{showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+									</button></div>
 							</div>
 							{errors.password && (
 								<span className="text-red-500 text-xs sm:text-sm mt-1.5 block ml-0 sm:ml-[84px] md:ml-[94px]">

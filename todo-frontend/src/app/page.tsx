@@ -36,10 +36,10 @@ export default function Home() {
 				</Link>
 			</div>
 
-			{/* Todo Preview */}
+			{/* Todo Preview
 			<div className="flex items-center justify-center h-[40dvh] sm:h-[45dvh] md:h-[50dvh] text-lg sm:text-xl md:text-2xl font-mono">
 				todo preview
-			</div>
+			</div> */}
 		</div>
 	);
 }

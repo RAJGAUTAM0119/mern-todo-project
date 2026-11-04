@@ -16,6 +16,11 @@ export async function register(name: string, email: string, password: string) {
   });
 }
 
-export function logout() {
-  clearToken();
+export async function logout() {
+  try {
+    await apiRequest("/auth/logout", { method: "POST" });
+  } finally {
+    clearToken();
+    window.location.href = "/login";
+  }
 }

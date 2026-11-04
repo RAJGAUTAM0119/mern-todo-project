@@ -31,19 +31,24 @@ This is production-ready todo application build using MERN Stack ( MongoDB, Expr
 src/
 |-- config # Application Configuration
 
-## Instalation
+## Requirements
 
-```bash
-git clone
-```
+- Node.js 20.19 or newer
+- MongoDB running locally, or a MongoDB connection string
+
+## Installation
 
 ```bash
 npm install
 ```
 
 ```bash
-cp .env.example .env
+copy .env.example .env
 ```
+
+Edit `.env` and replace both token-secret placeholders with different random
+values before starting the server. Keep `.env` private and use separate secrets
+in production.
 
 ```bash
 npm run dev
@@ -51,6 +56,26 @@ npm run dev
 
 ## Environment Variables
 
-- PORT # Server port
-- MONGODB_URI # Mongo Db Connection String
--
+- `PORT` — API port (3001 by default)
+- `MONGODB_URI` — MongoDB connection string
+- `ACCESS_TOKEN_SECRET` / `REFRESH_TOKEN_SECRET` — different random signing secrets
+- `ACCESS_TOKEN_EXPIRY` / `REFRESH_TOKEN_EXPIRY` — token lifetimes (for example `15m` and `7d`)
+- `FRONTEND_URL` — allowed frontend origin (defaults to `http://localhost:3000`)
+- `NODE_ENV` — set to `production` when deployed
+
+For a production build, run `npm run build` followed by `npm start`.
+
+## API
+
+The API base URL is `http://localhost:3001/api/v1`.
+
+- `POST /auth/register` and `POST /auth/login` accept JSON credentials.
+- `POST /auth/refresh` returns a new access token using the refresh cookie.
+- `GET /todo/get-todos` requires a bearer access token and supports `completed`
+  (`true` or `false`), `page`, `limit` (capped at 100), `sort`, `order`, and
+  `priority` query parameters.
+- `POST /todo/create-todo`, `PATCH /todo/:todoId`, and
+  `DELETE /todo/:todoId` require a bearer access token.
+
+Todo creation requires `title`; `description` and `dueDate` are optional.
+`priority` can be `LOW`, `MEDIUM`, or `HIGH` and defaults to `MEDIUM`.

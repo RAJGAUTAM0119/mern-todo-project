@@ -4,6 +4,23 @@ import { AppError } from "../../shared/errors/AppError.ts";
 import { TodoQueryDTO } from "./dto/todoQuery.dto.ts";
 import { TodoPriority } from "./todo.model.ts";
 
+const parsePositiveInteger = (
+  value: unknown,
+  defaultValue: number,
+  fieldName: string,
+): number => {
+  if (value === undefined) return defaultValue;
+  if (typeof value !== "string" || !/^[1-9]\d*$/.test(value)) {
+    throw new AppError(400, `Invalid ${fieldName}`);
+  }
+
+  const parsedValue = Number(value);
+  if (!Number.isSafeInteger(parsedValue)) {
+    throw new AppError(400, `Invalid ${fieldName}`);
+  }
+
+  return parsedValue;
+};
 
 const createTodo = async (req: Request, res: Response) => {
   const todoData = req.body
@@ -30,20 +47,20 @@ const getUserTodos = async (req: Request, res: Response) => {
     throw new AppError(401, "User is not valid")
   }
 
+  if (
+    req.query.completed !== undefined &&
+    req.query.completed !== "true" &&
+    req.query.completed !== "false"
+  ) {
+    throw new AppError(400, "Invalid completed value");
+  }
   const completed =
     req.query.completed === undefined
       ? undefined
       : req.query.completed === "true";
 
-  const page =
-    typeof req.query.page === "string"
-      ? Number(req.query.page)
-      : 1;
-
-  const limit =
-    typeof req.query.limit === "string"
-      ? Number(req.query.limit)
-      : 10;
+  const page = parsePositiveInteger(req.query.page, 1, "page");
+  const limit = parsePositiveInteger(req.query.limit, 10, "limit");
 
   const allowedSortFields = [
     "createdAt",
@@ -129,7 +146,7 @@ const updateUserTodo = async (req: Request, res: Response) => {
   const update = req.body
   const todo = await updateTodoService({ todoId, userId, update })
   if (!todo) {
-    throw new AppError(204, "Service is not working properly")
+    throw new AppError(404, "Todo not found")
   }
 
   res.status(200).json({

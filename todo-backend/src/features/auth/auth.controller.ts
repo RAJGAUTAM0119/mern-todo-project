@@ -34,6 +34,19 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
 	})
 }
 
+export const logoutUser = (req: Request, res: Response) => {
+	res.clearCookie("refreshToken", {
+		httpOnly: true,
+		secure: process.env.NODE_ENV === "production",
+		sameSite: "strict",
+	});
+
+	return res.status(200).json({
+		success: true,
+		message: "Logged out successfully",
+	});
+};
+
 export const getUserTodos = (req: Request, res: Response) => {
 	res.status(200).json({
 		success: true,
@@ -57,7 +70,7 @@ export const accessTokenRotation = async (req: Request, res: Response) => {
 
 
 export const auth = {
-	registerUser, loginUser, getUserTodos, accessTokenRotation
+	registerUser, loginUser, getUserTodos, accessTokenRotation, logoutUser
 };
 
 

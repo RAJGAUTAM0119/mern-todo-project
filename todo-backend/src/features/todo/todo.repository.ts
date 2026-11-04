@@ -36,15 +36,20 @@ export const getTodoRepo = async (getTodo: TodoQueryDTO) => {
   const requestedLimit = limit ?? DEFAULT_LIMIT;
 
 
-  let LIMIT = requestedLimit;
-  let SKIP = (requestedPage - 1) * requestedLimit;
-
-  if (SKIP < 0) {
+  if (
+    !Number.isSafeInteger(requestedPage) ||
+    requestedPage < 1 ||
+    !Number.isSafeInteger(requestedLimit) ||
+    requestedLimit < 1
+  ) {
     throw new AppError(400, "There is pagination error");
   }
 
-  if (LIMIT > 100) {
-    LIMIT = MAX_LIMIT
+  const LIMIT = Math.min(requestedLimit, MAX_LIMIT);
+  const SKIP = (requestedPage - 1) * LIMIT;
+
+  if (!Number.isSafeInteger(SKIP)) {
+    throw new AppError(400, "There is pagination error");
   }
 
   const direction = order === "asc" ? 1 : -1;
@@ -74,8 +79,6 @@ export const getTodoRepo = async (getTodo: TodoQueryDTO) => {
     ];
   }
 
-  console.log(LIMIT)
-
   const results = await todoModel
     .find(filter)
     .sort(sorting)
@@ -99,7 +102,7 @@ export const updateTodoRepo = async (updateData: UpdateData) => {
     }
   )
   if (!updateTodo) {
-    throw new AppError(400, "Fields are invalid in repository")
+    throw new AppError(404, "Todo not found")
   }
   return updateTodo
 }
@@ -113,7 +116,7 @@ export const deleteTodoRepo = async (updateData: UpdateData) => {
     }
   )
   if (!deleteTodo) {
-    throw new AppError(400, "Todo not found")
+    throw new AppError(404, "Todo not found")
   }
   return deleteTodo
 }

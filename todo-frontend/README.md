@@ -3,7 +3,7 @@
 The frontend uses `NEXT_PUBLIC_API_URL` as the API base URL. Create a `.env.local` file in this folder:
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1
+NEXT_PUBLIC_API_URL=http://localhost:3001/api/v1
 ```
 
 Start the backend first, then start the frontend:
